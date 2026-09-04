@@ -55,3 +55,30 @@ The same overlay works with Home Manager. After adding it to `nixpkgs.overlays`,
 - `overlays.default`, which adds `pkgs.fastpotify`
 
 Supported system: `x86_64-linux`.
+
+## Maintenance
+
+Requires `just`, Nix with flakes enabled, Git, Bash, and `jq`. Run `just` to list tasks:
+
+```sh
+just build    # Build Fastpotify
+just check    # Check the flake
+just fmt      # Format Nix files
+just release  # Update Fastpotify, validate, commit, and push
+just update   # Update flake inputs, validate, commit, and push
+```
+
+`release` uses `nix-update` from the pinned nixpkgs to find the latest stable
+Fastpotify version and update its source and Cargo hashes. It fails if there is
+no newer version. Commits look like `fastpotify: 0.4.1 -> 0.4.2`.
+
+`update` runs `nix flake update` and fails if the lock file is unchanged. Commits
+include the old and new nixpkgs revisions, e.g.
+`flake: update nixpkgs e8be781 -> 5545adf`.
+
+Both publishing tasks require a clean working tree (including untracked files)
+and a branch with a configured upstream. They check the flake and build
+Fastpotify before committing only the relevant file, then run `git push`.
+Updates that fail validation are left uncommitted for inspection; if pushing
+fails, the local commit remains and you can retry with `git push`.
+These tasks do not create Git tags or GitHub releases.
