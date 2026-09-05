@@ -15,20 +15,21 @@
   libxi,
   libxrandr,
   versionCheckHook,
+  libprojectm,
 }:
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "fastpotify";
-  version = "0.4.1";
+  version = "0.6.0";
 
   src = fetchFromGitHub {
     owner = "crmne";
     repo = "fastpotify";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-z/g5T2qR7nyBbxeSDEJ8GVRkyrkX/6F6GOLUa7lvgMM=";
+    hash = "sha256-N7SSPALIQJpAL4nTf+H+sTHwXu6jby6DRm4oUXTTq0I=";
   };
 
-  cargoHash = "sha256-JBU8IhhJDZeXu6F/oSwMYTyYwXLBFz25POpQnMbtjrg=";
+  cargoHash = "sha256-wC3tq8xj9tLYmZkvnsoHgYaTAtnwmktL1lAifeK0ui8=";
 
   nativeBuildInputs = [
     pkg-config
@@ -41,7 +42,17 @@ rustPlatform.buildRustPackage (finalAttrs: {
     alsa-lib
     libpulseaudio
     libGL
+    libx11
+    libprojectm
   ];
+
+  postPatch = ''
+         # projectm-sys searches only $out/lib, but CMake defaults to lib64 on NixOS.
+         substituteInPlace "$cargoDepsCopy"/source-*/projectm-sys-*/build.rs \
+           --replace-fail '.define("ENABLE_PLAYLIST", enable_playlist_flag)' \
+             '.define("CMAKE_INSTALL_LIBDIR", "lib").define("ENABLE_PLAYLIST",
+    enable_playlist_flag)'
+  '';
 
   postInstall = ''
     install -Dm644 packaging/applications/fastpotify.desktop \
