@@ -20,16 +20,16 @@
 
 rustPlatform.buildRustPackage (finalAttrs: {
   pname = "fastpotify";
-  version = "0.6.0";
+  version = "0.7.1";
 
   src = fetchFromGitHub {
     owner = "crmne";
     repo = "fastpotify";
     tag = "v${finalAttrs.version}";
-    hash = "sha256-N7SSPALIQJpAL4nTf+H+sTHwXu6jby6DRm4oUXTTq0I=";
+    hash = "sha256-RZEM1b7oj0dAIXKf+B4z5g8RaO9lArMk04/h++roGME=";
   };
 
-  cargoHash = "sha256-wC3tq8xj9tLYmZkvnsoHgYaTAtnwmktL1lAifeK0ui8=";
+  cargoHash = "sha256-DrwPRPGr2QBXpTKJmCSHLnOJAymwuN7SKKqEYlNTQHc=";
 
   nativeBuildInputs = [
     pkg-config
